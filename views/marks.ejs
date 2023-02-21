@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Student Marks Detail Form</title>
+</head>
+<body>
+  <h1>Student Marks Detail Form</h1>
+  <form action="/submitmarks" method="post">
+    <label for="name">Student Name:</label>
+    <input type="text" id="name" name="name" required>
+    <br>
+    <label for="math">Math Marks:</label>
+    <input type="number" id="math" name="math" min="0" max="100">
+    <br>
+    <label for="english">English Marks:</label>
+    <input type="number" id="english" name="english" min="0" max="100">
+    <br>
+    <label for="computer">Computer Marks:</label>
+    <input type="number" id="computer" name="computer" min="0" max="100">
+    <br>
+    <button type="submit">Submit</button>
+  </form>
+  <br><br>
+  <% if (typeof total !== 'undefined') { %>
+    <label for="name">Student Name:  <%= name %></label>
+    <br>
+    
+    <label for="math">Math:  <%= math %></label>
+    <br>
+
+    <label for="english">English: <%= english %></label>
+    <br>
+
+    <label for="computer">Computer <%= computer %>:</label>
+    <br>
+
+    <label for="total">Total: <%= total %></label>
+    <br>
+  <% } %>
+</body>
+</html>
