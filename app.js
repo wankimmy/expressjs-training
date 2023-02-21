@@ -29,7 +29,24 @@ app.set('view engine', 'ejs');
 
 // Define routes
 app.get('/', (req, res) => {
-  res.render('home', { requestDate: req.requestDate });
+  res.render('login');
+});
+
+app.post('/submitlogin', (req, res) => {
+  const { username, password } = req.body;
+
+  if (username != "admin") {
+     res.render('error', { message: "Invalid Username, Please retry again" });
+  }else if (password != "admin") {
+     res.render('error', { message: "Invalid Password, Please retry again" });
+  }else{
+    res.render('home', { requestDate: req.requestDate, message: "Login Success !" });
+  }
+  
+});
+
+app.get('/home', (req, res) => {
+  res.render('home', { requestDate: req.requestDate, message: "" });
 });
 
 app.get('/registration', (req, res) => {
@@ -96,6 +113,3 @@ app.listen(5000, () => {
 });
 
 
-// create a login screen with username input and password input with html and express.js, the username should not be blank, password also should not be blank, if user is "admin" & password is "admin", then redirect to home page, only logged in user able to view home page, else auto redirect to login page. for wrong user and password, redirect to error page error.ejs
-
-// open the login screen in popup
