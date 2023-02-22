@@ -29,6 +29,8 @@ db.connect((err) => {
 });
 
 
+
+
 // Parse JSON and URL-encoded query
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
