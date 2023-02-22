@@ -1,5 +1,6 @@
 // Import required modules
 const express = require('express');
+const mysql = require('mysql');
 const bodyParser = require('body-parser');
 
 const ejs = require('ejs');
@@ -10,6 +11,22 @@ const app = express();
 
 // Use body-parser middleware to handle form data
 // app.use(bodyParser.urlencoded({ extended: false }));
+
+// MySQL Connection
+const db = mysql.createConnection({
+  host: 'localhost',
+  user: 'root',
+  password: '',
+  database: 'expressdb'
+});
+
+db.connect((err) => {
+  if (err) {
+    throw err;
+  }
+  console.log('Connected to database');
+});
+
 
 // Parse JSON and URL-encoded query
 app.use(express.json());
@@ -31,6 +48,74 @@ app.set('view engine', 'ejs');
 app.get('/', (req, res) => {
   res.render('login');
 });
+
+app.get('/user', (req, res) => {
+  res.render('crud/users');
+});
+
+// Get All Users
+app.get('/users', (req, res) => {
+  const sql = 'SELECT * FROM users';
+  db.query(sql, (err, result) => {
+    if (err) {
+      throw err;
+    }
+    res.send(result);
+  });
+});
+
+// Create User
+app.post('/users', (req, res) => {
+  const { name, email } = req.body;
+  const sql = `INSERT INTO users (name, email) VALUES ('${name}', '${email}')`;
+  db.query(sql, (err, result) => {
+    if (err) {
+      throw err;
+    }
+    res.send('User created successfully');
+  });
+});
+
+// Update User
+app.put('/users/:id', (req, res) => {
+  const id = req.params.id;
+  const { name, email } = req.body;
+  const sql = `UPDATE users SET name = '${name}', email = '${email}' WHERE id = ${id}`;
+  db.query(sql, (err, result) => {
+    if (err) {
+      throw err;
+    }
+    res.send('User updated successfully');
+  });
+});
+
+// Delete User
+app.delete('/users/:id', (req, res) => {
+  const id = req.params.id;
+  const sql = `DELETE FROM users WHERE id = ${id}`;
+  db.query(sql, (err, result) => {
+    if (err) {
+      throw err;
+    }
+    res.send('User deleted successfully');
+  });
+});
+
+
+
+
+// Get All User API
+app.get('/api/users', (req, res) => {
+  const sql = 'SELECT * FROM users';
+  db.query(sql, (err, result) => {
+    if (err) {
+      throw err;
+    }
+    res.json(result);
+  });
+});
+
+
 
 app.post('/submitlogin', (req, res) => {
   const { username, password } = req.body;
@@ -108,8 +193,8 @@ app.post('/submitmarks', (req, res) => {
 
 
 // Start the server
-app.listen(5000, () => {
-  console.log('Server started on port 5000');
+app.listen(3000, () => {
+  console.log('Server started on port 3000');
 });
 
 

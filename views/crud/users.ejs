@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <style>
+    #table {
+      font-family: Arial, Helvetica, sans-serif;
+      border-collapse: collapse;
+      width: 100%;
+    }
+
+    #table td, #table th {
+      border: 1px solid #ddd;
+      padding: 8px;
+    }
+
+    #table tr:nth-child(even){background-color: #f2f2f2;}
+
+    #table tr:hover {background-color: #ddd;}
+
+    #table th {
+      padding-top: 12px;
+      padding-bottom: 12px;
+      text-align: left;
+      background-color: #04AA6D;
+      color: white;
+    }
+    </style>
+    <title>CRUD Example</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  </head>
+  <body>
+
+    <h2>Create User</h2>
+    <form id="create-user-form">
+      <label for="name">Name:</label>
+      <input type="text" id="name" name="name"><br>
+      <label for="email">Email:</label>
+      <input type="email" id="email" name="email"><br>
+      <button type="submit">Create</button>
+    </form>
+
+    <h2>Update User</h2>
+    <form id="update-user-form">
+      <label for="update-id">ID:</label>
+      <input type="number" id="update-id" name="id"><br>
+      <label for="update-name">Name:</label>
+      <input type="text" id="update-name" name="name"><br>
+      <label for="update-email">Email:</label>
+      <input type="email" id="update-email" name="email"><br>
+      <button type="submit">Update</button>
+    </form>
+
+    <br>
+    <table id="table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody id="user-list">
+      </tbody>
+    </table>
+
+    
+   
+
+<script>
+  // Get all users
+  $.get('/users', function(users) {
+    for (let i = 0; i < users.length; i++) {
+      const user = users[i];
+      $('#user-list').append(`
+        <tr>
+          <td>${user.id}</td>
+          <td>${user.name}</td>
+          <td>${user.email}</td>
+          <td>
+            <button class="edit-btn" data-id="${user.id}" data-name="${user.name}" data-email="${user.email}">Edit</button>
+            <button class="delete-btn" data-id="${user.id}">Delete</button>
+          </td>
+        </tr>
+      `);
+    }
+
+    // Edit user button
+    $('.edit-btn').click(function() {
+      const id = $(this).data('id');
+      const name = $(this).data('name');
+      const email = $(this).data('email');
+      $('#update-id').val(id);
+      $('#update-name').val(name);
+      $('#update-email').val(email);
+     
+    });
+
+    // Delete user button
+    $('.delete-btn').click(function() {
+      const id = $(this).data('id');
+      $.ajax({
+        url: `/users/${id}`,
+        type: 'DELETE',
+        success: function() {
+          location.reload();
+        }
+      });
+    });
+  });
+
+  // Create user form submission
+  $('#create-user-form').submit(function(event) {
+    event.preventDefault();
+    const name = $('#name').val();
+    const email = $('#email').val();
+    $.post('/users', { name, email }, function() {
+      location.reload();
+    });
+  });
+
+  // Update user form submission
+  $('#update-user-form').submit(function(event) {
+    event.preventDefault();
+    const id = $('#update-id').val();
+    const name = $('#update-name').val();
+    const email = $('#update-email').val();
+    $.ajax({
+      url: `/users/${id}`,
+      type: 'PUT',
+      data: { name, email },
+      success: function() {
+        location.reload();
+      }
+    });
+  });
+
+  
+</script>
+
+ </body>
+</html>
+
