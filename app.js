@@ -2,6 +2,7 @@
 const express = require('express');
 const mysql = require('mysql');
 const bodyParser = require('body-parser');
+const axios = require('axios');
 
 const ejs = require('ejs');
 const fs = require('fs');
@@ -53,58 +54,7 @@ app.get('/user', (req, res) => {
   res.render('crud/users');
 });
 
-// Get All Users
-app.get('/users', (req, res) => {
-  const sql = 'SELECT * FROM users';
-  db.query(sql, (err, result) => {
-    if (err) {
-      throw err;
-    }
-    res.send(result);
-  });
-});
-
-// Create User
-app.post('/users', (req, res) => {
-  const { name, email } = req.body;
-  const sql = `INSERT INTO users (name, email) VALUES ('${name}', '${email}')`;
-  db.query(sql, (err, result) => {
-    if (err) {
-      throw err;
-    }
-    res.send('User created successfully');
-  });
-});
-
-// Update User
-app.put('/users/:id', (req, res) => {
-  const id = req.params.id;
-  const { name, email } = req.body;
-  const sql = `UPDATE users SET name = '${name}', email = '${email}' WHERE id = ${id}`;
-  db.query(sql, (err, result) => {
-    if (err) {
-      throw err;
-    }
-    res.send('User updated successfully');
-  });
-});
-
-// Delete User
-app.delete('/users/:id', (req, res) => {
-  const id = req.params.id;
-  const sql = `DELETE FROM users WHERE id = ${id}`;
-  db.query(sql, (err, result) => {
-    if (err) {
-      throw err;
-    }
-    res.send('User deleted successfully');
-  });
-});
-
-
-
-
-// Get All User API
+// Get User API
 app.get('/api/users', (req, res) => {
   const sql = 'SELECT * FROM users';
   db.query(sql, (err, result) => {
@@ -115,6 +65,53 @@ app.get('/api/users', (req, res) => {
   });
 });
 
+// POST User API
+app.post('/api/users', (req, res) => {
+  const { name, email } = req.body;
+  const sql = `INSERT INTO users (name, email) VALUES ('${name}', '${email}')`;
+  db.query(sql, (err, result) => {
+    if (err) {
+      throw err;
+    }
+    res.json(result);
+  });
+});
+
+// UPDATE User API
+app.put('/api/users/:id', (req, res) => {
+  const id = req.params.id;
+  const { name, email } = req.body;
+  const sql = `UPDATE users SET name = '${name}', email = '${email}' WHERE id = ${id}`;
+  db.query(sql, (err, result) => {
+    if (err) {
+      throw err;
+    }
+    res.json(result);
+  });
+});
+
+// DELETE User API
+app.delete('/api/users/:id', (req, res) => {
+  const id = req.params.id;
+  const sql = `DELETE FROM users WHERE id = ${id}`;
+  db.query(sql, (err, result) => {
+    if (err) {
+      throw err;
+    }
+    res.json(result);
+  });
+});
+
+// GET route to fetch all users
+app.get('/users', async (req, res) => {
+  try {
+    const response = await axios.get('http://localhost:3000/api/users');
+    res.send(response.data);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Error fetching users');
+  }
+});
 
 
 app.post('/submitlogin', (req, res) => {

@@ -66,6 +66,7 @@
 
     
    
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 
 <script>
   // Get all users
@@ -99,12 +100,12 @@
     // Delete user button
     $('.delete-btn').click(function() {
       const id = $(this).data('id');
-      $.ajax({
-        url: `/users/${id}`,
-        type: 'DELETE',
-        success: function() {
-          location.reload();
-        }
+      axios.delete(`/api/users/${id}`, { name, email })
+      .then(() => {
+        location.reload();
+      })
+      .catch(error => {
+        console.error(error);
       });
     });
   });
@@ -114,9 +115,14 @@
     event.preventDefault();
     const name = $('#name').val();
     const email = $('#email').val();
-    $.post('/users', { name, email }, function() {
+    axios.post(`/api/users`, { name, email })
+    .then(() => {
       location.reload();
+    })
+    .catch(error => {
+      console.error(error);
     });
+
   });
 
   // Update user form submission
@@ -125,14 +131,14 @@
     const id = $('#update-id').val();
     const name = $('#update-name').val();
     const email = $('#update-email').val();
-    $.ajax({
-      url: `/users/${id}`,
-      type: 'PUT',
-      data: { name, email },
-      success: function() {
-        location.reload();
-      }
+    axios.put(`/api/users/${id}`, { name, email })
+    .then(() => {
+      location.reload();
+    })
+    .catch(error => {
+      console.error(error);
     });
+
   });
 
   
